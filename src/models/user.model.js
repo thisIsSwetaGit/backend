@@ -19,7 +19,7 @@ const userSchema = new Schema(
             lowecase: true,
             trim: true, 
         },
-        fullname: {
+        fullName: {
             type: String,
             required: true,
             trim: true, 

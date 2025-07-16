@@ -1,4 +1,10 @@
 // require('dotenv').config({path: './env'})
+console.log("=== ENVIRONMENT DEBUG ===");
+console.log("CLOUDINARY_CLOUD_NAME:", process.env.CLOUDINARY_CLOUD_NAME);
+console.log("CLOUDINARY_API_KEY:", process.env.CLOUDINARY_API_KEY);
+console.log("CLOUDINARY_API_SECRET:", process.env.CLOUDINARY_API_SECRET ? "EXISTS" : "MISSING");
+console.log("=== END DEBUG ===");
+
 import dotenv from "dotenv"
 import connectDB from "./db/index.js";
 import {app} from './app.js'

@@ -28,10 +28,10 @@ const registerUser = asyncHandler( async (req, res) => {
     console.log("BODY:", req.body);
     console.log("FILES:", req.files);
 
-    const {fullNamN, email, username, password } = req.body
+    const {fullName, email, username, password } = req.body
 
     if (
-        [fullNamN, email, username, password].some((field) => field?.trim() === "")
+        [fullName, email, username, password].some((field) => field?.trim() === "")
     ) {
         throw new ApiError(400, "All fields are required")
     }
@@ -64,7 +64,7 @@ const registerUser = asyncHandler( async (req, res) => {
     }
    
     const user = await User.create({
-        fullNamN,
+        fullName,
         avatar: avatar.url,
         coverImage: coverImage?.url || "",
         email, 
@@ -124,9 +124,10 @@ const loginUser = asyncHandler(async (req, res) =>{
     const loggedInUser = await User.findById(user._id).select("-password -refreshToken")
 
     const options = {
-        httpOnly: true,
-        secure: true
-    }
+    httpOnly: true,
+    secure: false, // <-- MUST be false for localhost!
+    sameSite: "lax"
+}
 
     return res
     .status(200)
@@ -158,9 +159,10 @@ const logoutUser = asyncHandler(async(req, res) => {
     )
 
     const options = {
-        httpOnly: true,
-        secure: true
-    }
+    httpOnly: true,
+    secure: false, // <-- MUST be false for localhost!
+    sameSite: "lax"
+}
 
     return res
     .status(200)
@@ -193,10 +195,11 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
             
         }
     
-        const options = {
-            httpOnly: true,
-            secure: true
-        }
+       const options = {
+    httpOnly: true,
+    secure: false, // <-- MUST be false for localhost!
+    sameSite: "lax"
+}
     
         const {accessToken, newRefreshToken} = await generateAccessAndRefereshTokens(user._id)
     
@@ -249,9 +252,9 @@ const getCurrentUser = asyncHandler(async(req, res) => {
 })
 
 const updateAccountDetails = asyncHandler(async(req, res) => {
-    const {fullNamN, email} = req.body
+    const {fullName, email} = req.body
 
-    if (!fullNamN || !email) {
+    if (!fullName || !email) {
         throw new ApiError(400, "All fields are required")
     }
 
@@ -259,7 +262,7 @@ const updateAccountDetails = asyncHandler(async(req, res) => {
         req.user?._id,
         {
             $set: {
-                fullNamN,
+                fullName,
                 email: email
             }
         },
@@ -388,7 +391,7 @@ const getUserChannelProfile = asyncHandler(async(req, res) => {
         },
         {
             $project: {
-                fullNamN: 1,
+                fullName: 1,
                 username: 1,
                 subscribersCount: 1,
                 channelsSubscribedToCount: 1,
@@ -435,7 +438,7 @@ const getWatchHistory = asyncHandler(async(req, res) => {
                             pipeline: [
                                 {
                                     $project: {
-                                        fullNamN: 1,
+                                        fullName: 1,
                                         username: 1,
                                         avatar: 1
                                     }
